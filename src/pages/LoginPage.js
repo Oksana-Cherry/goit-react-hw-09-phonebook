@@ -1,9 +1,11 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+//import React, { Component } from 'react';
+//import { connect } from 'react-redux';
+import { useState, useCallback } from 'react';
+import { useDispatch } from 'react-redux';
 import { authOperations } from '../redux/auth';
 import Button from '@material-ui/core/Button';
-
-const styles = {
+import styles from './Page.module.css';
+/*const styles = {
   form: {
     width: 320,
   },
@@ -12,15 +14,20 @@ const styles = {
     flexDirection: 'column',
     marginBottom: 15,
   },
-};
+};*/
 
-class LoginPage extends Component {
+/*class LoginPage extends Component {
   state = {
     email: '',
     password: '',
-  };
+  };*/
+export default function LoginPage() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
-  handleChange = ({ target: { name, value } }) => {
+  const dispatch = useDispatch();
+
+  /*handleChange = ({ target: { name, value } }) => {
     this.setState({ [name]: value });
   };
 
@@ -30,52 +37,79 @@ class LoginPage extends Component {
     this.props.onLogin(this.state);
 
     this.setState({ name: '', email: '', password: '' });
-  };
 
-  render() {
-    const { email, password } = this.state;
 
-    return (
-      <div>
-        <h1>Login page</h1>
+  };*/ const handleChange = useCallback(
+    ({ target: { name, value } }) => {
+      switch (name) {
+        case 'email':
+          setEmail(value);
+          break;
 
-        <form
-          onSubmit={this.handleSubmit}
-          style={styles.form}
-          autoComplete="off"
-        >
-          <label style={styles.label}>
-            Email
-            <input
-              type="email"
-              name="email"
-              value={email}
-              onChange={this.handleChange}
-            />
-          </label>
+        case 'password':
+          setPassword(value);
+          break;
 
-          <label style={styles.label}>
-            Password
-            <input
-              type="password"
-              name="password"
-              value={password}
-              onChange={this.handleChange}
-            />
-          </label>
+        default:
+          console.warn(`Тип поля ${name} не обрабатывается`);
+      }
+    },
+    [],
+  );
+  const handleSubmit = useCallback(
+    event => {
+      event.preventDefault();
 
-          <Button type="submit" variant="contained" color="primary">
-            Acess{' '}
-          </Button>
-        </form>
-      </div>
-    );
-  }
+      const user = {
+        email,
+        password,
+      };
+
+      dispatch(authOperations.logIn(user));
+
+      setEmail('');
+      setPassword('');
+    },
+    [email, password, dispatch],
+  );
+  //render() {
+  // const { email, password } = this.state;
+
+  return (
+    <div>
+      <h1>Login page</h1>
+
+      <form onSubmit={handleSubmit} className={styles.form} autoComplete="off">
+        <label className={styles.label}>
+          Email
+          <input
+            type="email"
+            name="email"
+            value={email}
+            onChange={handleChange}
+          />
+        </label>
+
+        <label className={styles.label}>
+          Password
+          <input
+            type="password"
+            name="password"
+            value={password}
+            onChange={handleChange}
+          />
+        </label>
+
+        <Button type="submit" variant="contained" color="primary">
+          Acess{' '}
+        </Button>
+      </form>
+    </div>
+  );
 }
-/* const mapDispatchToProps = dispatch => ({
-  onLogin: data => dispatch(authOperations.login(data)),
-});*/
-const mapDispatchToProps = {
+//}
+
+/*const mapDispatchToProps = {
   onLogin: authOperations.logIn,
 };
-export default connect(null, mapDispatchToProps)(LoginPage);
+export default connect(null, mapDispatchToProps)(LoginPage);*/

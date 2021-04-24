@@ -1,8 +1,11 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+//import React, { Component } from 'react';
+//import { connect } from 'react-redux';
+import { useState, useCallback } from 'react';
+import { useDispatch } from 'react-redux';
 import { authOperations } from '../redux/auth';
 import Button from '@material-ui/core/Button';
-const styles = {
+import styles from './Page.module.css';
+/*const styles = {
   form: {
     width: 320,
   },
@@ -11,82 +14,111 @@ const styles = {
     flexDirection: 'column',
     marginBottom: 15,
   },
-};
+};*/
 
-class RegisterPage extends Component {
+/*class RegisterPage extends Component {
   state = {
     name: '',
     email: '',
     password: '',
-  };
+  };*/
+export default function RegisterPage() {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
-  handleChange = ({ target: { name, value } }) => {
+  const dispatch = useDispatch();
+
+  /*handleChange = ({ target: { name, value } }) => {
     this.setState({ [name]: value });
-  };
+  };*/
+  const handleChange = useCallback(({ target: { name, value } }) => {
+    switch (name) {
+      case 'name':
+        setName(value);
+        break;
 
-  handleSubmit = e => {
+      case 'email':
+        setEmail(value);
+        break;
+
+      case 'password':
+        setPassword(value);
+        break;
+
+      default:
+        console.warn(`Тип поля ${name} не обрабатывается`);
+    }
+  }, []);
+
+  /*handleSubmit = e => {
     e.preventDefault();
 
     this.props.onRegister(this.state); //mapDispatchToProps
 
     this.setState({ name: '', email: '', password: '' });
-  };
+  };*/
 
-  render() {
-    const { name, email, password } = this.state;
+  //render() {
+  //const { name, email, password } = this.state;
+  const handleSubmit = useCallback(
+    event => {
+      event.preventDefault();
 
-    return (
-      <div>
-        <h1>Authorization</h1>
+      const user = {
+        name,
+        email,
+        password,
+      };
+      dispatch(authOperations.register(user));
 
-        <form
-          onSubmit={this.handleSubmit}
-          style={styles.form}
-          autoComplete="off"
-        >
-          <label style={styles.label}>
-            Name
-            <input
-              type="text"
-              name="name"
-              value={name}
-              onChange={this.handleChange}
-            />
-          </label>
+      setName('');
+      setEmail('');
+      setPassword('');
+    },
+    [name, email, password, dispatch],
+  );
 
-          <label style={styles.label}>
-            Email
-            <input
-              type="email"
-              name="email"
-              value={email}
-              onChange={this.handleChange}
-            />
-          </label>
+  return (
+    <div>
+      <h1>Authorization</h1>
 
-          <label style={styles.label}>
-            Password
-            <input
-              type="password"
-              name="password"
-              value={password}
-              onChange={this.handleChange}
-            />
-          </label>
+      <form onSubmit={handleSubmit} className={styles.form} autoComplete="off">
+        <label className={styles.label}>
+          Name
+          <input type="text" name="name" value={name} onChange={handleChange} />
+        </label>
 
-          <Button type="submit" variant="contained" color="primary">
-            Sign in
-          </Button>
-        </form>
-      </div>
-    );
-  }
+        <label className={styles.label}>
+          Email
+          <input
+            type="email"
+            name="email"
+            value={email}
+            onChange={handleChange}
+          />
+        </label>
+
+        <label className={styles.label}>
+          Password
+          <input
+            type="password"
+            name="password"
+            value={password}
+            onChange={handleChange}
+          />
+        </label>
+
+        <Button type="submit" variant="contained" color="primary">
+          Sign in
+        </Button>
+      </form>
+    </div>
+  );
 }
+//}
 
-/* const mapDispatchToProps = dispatch => ({
-  onSubmit: data => dispatch(authOperations.register(data)),
-});*/
-const mapDispatchToProps = {
+/*const mapDispatchToProps = {
   onRegister: authOperations.register,
 };
-export default connect(null, mapDispatchToProps)(RegisterPage);
+export default connect(null, mapDispatchToProps)(RegisterPage);*/

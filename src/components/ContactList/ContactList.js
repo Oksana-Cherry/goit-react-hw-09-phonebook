@@ -1,8 +1,8 @@
-import { connect } from 'react-redux';
-import styles from './ContactList.module.css';
-//import contactsOperations from '../../redux/contacts/contect-operations';
-//import contactsSelectors from '../../redux/contacts/contacts-selectors';
+//import { connect } from 'react-redux';
+import { useCallback } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { contactsOperations, contactsSelectors } from '../../redux/contacts';
+import styles from './ContactList.module.css';
 
 const ContactListItem = ({ id, name, number, onDelete }) => {
   return (
@@ -15,9 +15,20 @@ const ContactListItem = ({ id, name, number, onDelete }) => {
   );
 };
 
-const ContactList = ({ contacts, onDelete }) => {
-  //console.log('contacts', contacts);
+/*onst ContactList = ({ contacts, onDelete }) => {
+  //console.log('contacts', contacts);*/
+
+export default function ContactList() {
+  const contacts = useSelector(contactsSelectors.getVisibleContact);
+  const dispatch = useDispatch();
+
+  const onDelete = useCallback(
+    id => dispatch(contactsOperations.deleteContact(id)),
+    [dispatch],
+  );
+
   if (contacts.length === 0) return null;
+
   return (
     <ul className={styles.List}>
       {contacts.map(contact => (
@@ -25,17 +36,9 @@ const ContactList = ({ contacts, onDelete }) => {
       ))}
     </ul>
   );
-};
-/*const getVisibleContacts = (contacts, filter) => {
-  return contacts.filter(contact =>
-    contact.name.toLowerCase().includes(filter.toLowerCase()),
-  );
-};
-/*const mapStateToProps = ({ contacts: { contacts, filter } }) => ({
-  contacts: getVisibleContacts(contacts, filter),
-});
-*/
-const mapStateToProps = state => ({
+}
+
+/*const mapStateToProps = state => ({
   contacts: contactsSelectors.getVisibleContact(state),
 });
 
@@ -43,4 +46,4 @@ const mapDispatchToProps = dispatch => ({
   onDelete: id => dispatch(contactsOperations.deleteContact(id)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(ContactList);
+export default connect(mapStateToProps, mapDispatchToProps)(ContactList);*/
