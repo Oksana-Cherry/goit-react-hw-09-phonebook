@@ -7,11 +7,13 @@ import { contactsOperations, contactsSelectors } from '../../redux/contacts';
 import styles from './ContactForm.module.css';
 
 export default function ContactForm() {
-  const [number, setNumber] = useState('');
+  
   const [name, setName] = useState('');
+  const [number, setNumber] = useState('');
   const inputRef = useRef(null);
-  const dispatch = useDispatch();
+
   const contacts = useSelector(contactsSelectors.getContacts);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     inputRef.current.focus();
@@ -64,14 +66,17 @@ export default function ContactForm() {
       return;
     }*/
     const isExistContact = contacts.find(contact => contact.name === name);
-    if (!isExistContact) {
-      dispatch(contactsOperations(name, number));
+    if (!isExistContact ){
+      dispatch(contactsOperations.addContact(name, number));
     } else {
       alert(`${name}is already in the Phonebook`);
     }
+    
     setName('');
     setNumber('');
+    
   };
+
 
   //resetForm = () => this.setState(this.state);
 
@@ -86,6 +91,7 @@ export default function ContactForm() {
           ref={inputRef}
           type="text"
           name="name"
+           required
           placeholder=""
           value={name}
           onChange={handleNameChange}
@@ -97,8 +103,10 @@ export default function ContactForm() {
           className={styles.Form_input}
           type="tel"
           name="number"
-          placeholder=""
           value={number}
+           required
+          placeholder="111-11-11"
+           pattern="[0-9]{3}-[0-9]{2}-[0-9]{2}"
           onChange={handleNumberChange}
         />
       </label>

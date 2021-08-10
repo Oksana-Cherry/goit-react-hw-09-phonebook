@@ -2,7 +2,7 @@
   "name": "goit-react",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://Oksana-Cherry.github.io/goit-react-hw-08-phonebook",
+  "homepage": "https://Oksana-Cherry.github.io/goit-react-hw-09-phonebook",
   "dependencies": {
     "@material-ui/core": "^4.11.3",
     "@material/button": "^11.0.0",
